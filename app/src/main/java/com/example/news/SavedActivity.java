@@ -37,15 +37,18 @@ public class SavedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved);
-        Intent intent = getIntent();
         lv = findViewById(R.id.lv_saved);
         UpdateLV();
     }
 
     public void UpdateLV() {
         ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(SavedActivity.this).getSaved();
-        SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, list);
-        lv.setAdapter(adapter);
+        if (!list.isEmpty()) {
+            TextView empty = findViewById(R.id.empty);
+            empty.setVisibility(View.INVISIBLE);
+            SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, list);
+            lv.setAdapter(adapter);
+        }
     }
 
     public class SavedAdapter extends ArrayAdapter<Item> {
