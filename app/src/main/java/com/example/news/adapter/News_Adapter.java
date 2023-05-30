@@ -23,6 +23,7 @@ public class News_Adapter extends ArrayAdapter<Item> {
     private List<Item> lists;
     TextView tv_title, tv_link, tv_date;
     ImageView iv_news;
+
     public News_Adapter(@NonNull Context context, ArrayList<Item> list) {
         super(context, 0, list);
         this.context = context;
@@ -33,14 +34,12 @@ public class News_Adapter extends ArrayAdapter<Item> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
-        if (v == null){
+        if (v == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.item_newss, null);
-//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            v = inflater.inflate(R.layout.item_news, null);
         }
         final Item item = lists.get(position);
-        if (item != null){
+        if (item != null) {
             tv_title = v.findViewById(R.id.tv_title_item_news);
             tv_link = v.findViewById(R.id.tv_link_news);
             tv_date = v.findViewById(R.id.tv_date_news);
@@ -54,17 +53,10 @@ public class News_Adapter extends ArrayAdapter<Item> {
             try {
                 String date = item.getDate().substring(4, 16);
                 tv_date.setText(date);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
         return v;
     }
-
-
-    //    public String getItemLink(int position){
-//        Item entry = lists.get(position);
-//        String link = entry.getTitle();
-//        return link;
-//    }
 }

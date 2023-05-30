@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +31,8 @@ public class NewsActivity extends AppCompatActivity {
     ListView lv;
     public List<Item> ItemLists = new ArrayList<>();
     String link;
+    private EditText editTextSearch;
+    private Button buttonSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +41,8 @@ public class NewsActivity extends AppCompatActivity {
         lv = findViewById(R.id.lv_news);
         Intent intent = getIntent();
         link = intent.getStringExtra("link");
-        Toast.makeText(getApplicationContext(), ""+link, Toast.LENGTH_SHORT).show();
-        if (checkInternet()){
+        Toast.makeText(getApplicationContext(), "" + link, Toast.LENGTH_SHORT).show();
+        if (checkInternet()) {
             downloadNew();
         }
 
@@ -47,26 +51,49 @@ public class NewsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 openLink(i);
             }
+        });
+        editTextSearch = findViewById(R.id.editTextSearch);
+        buttonSearch = findViewById(R.id.buttonSearch);
 
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyword = editTextSearch.getText().toString();
+                performSearch(keyword);
+            }
         });
     }
-    public boolean checkInternet(){
+
+    private void performSearch(String keyword) {
+        List<Item> searchResult = new ArrayList<>();
+        for (Item item : ItemLists) {
+            if (item.getTitle().indexOf(keyword) != -1) {
+                searchResult.add(item);
+            }
+        }
+        News_Adapter adapter = new News_Adapter(NewsActivity.this, (ArrayList<Item>) searchResult);
+        lv.setAdapter(adapter);
+    }
+
+
+    public boolean checkInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifi.isConnected() || mobile.isConnected()){
+        if (wifi.isConnected() || mobile.isConnected()) {
             return true;
         }
         return false;
     }
-    public void openLink(int i){
+
+    public void openLink(int i) {
         Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(NewsActivity.this, WebViewActivity.class);
         intent.putExtra("linknews", ItemLists.get(i).getLink());
         startActivity(intent);
     }
 
-    public void downloadNew(){
+    public void downloadNew() {
         new downloadXML(NewsActivity.this, lv).execute(link);
     }
 
@@ -75,6 +102,7 @@ public class NewsActivity extends AppCompatActivity {
         News_Adapter adapter;
         private ListView listView;
         private Context context;
+
         public downloadXML(Context context, ListView lv) {
             this.context = context;
             this.listView = lv;
@@ -83,21 +111,23 @@ public class NewsActivity extends AppCompatActivity {
         @Override
         protected List<Item> doInBackground(String... strings) {
             try {
-                ItemLists  =  loadURLfromNetWork(strings[0]);
+                ItemLists = loadURLfromNetWork(strings[0]);
                 return ItemLists;
-            }catch (Exception e){
+            } catch (Exception e) {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(List<Item> list) {
             super.onPostExecute(list);
             adapter = new News_Adapter(context, (ArrayList<Item>) list);
-            if (list != null){
+            if (list != null) {
                 listView.setAdapter(adapter);
             }
         }
-        private InputStream downloadURL(String url)throws IOException {
+
+        private InputStream downloadURL(String url) throws IOException {
             java.net.URL url1 = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) url1.openConnection();
             conn.setReadTimeout(10000);
@@ -109,7 +139,8 @@ public class NewsActivity extends AppCompatActivity {
             //Log.i("00000", in.toString());
             return in;
         }
-        public List<Item> loadURLfromNetWork(String strUrl)throws Exception{
+
+        public List<Item> loadURLfromNetWork(String strUrl) throws Exception {
             InputStream stream = null;
             XmlPullParserHandler handler = new XmlPullParserHandler();
             ItemLists = null;
@@ -117,8 +148,8 @@ public class NewsActivity extends AppCompatActivity {
                 stream = downloadURL(strUrl);
                 Log.i("00000", stream.toString());
                 ItemLists = handler.Pasers(stream);
-            }finally {
-                if (stream != null){
+            } finally {
+                if (stream != null) {
                     stream.close();
                 }
             }
