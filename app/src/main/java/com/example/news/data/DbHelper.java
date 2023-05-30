@@ -21,8 +21,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(table_news);
         String table_saved = "create table saved(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT NOT NULL, date TEXT NOT NULL, linkImg TEXT NOT NULL)";
         db.execSQL(table_saved);
-        String table_history = "create table history(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT NOT NULL, date TEXT NOT NULL, linkImg TEXT NOT NULL)";
-        db.execSQL(table_history);
         String data = "INSERT INTO News(name, link) VALUES " +
                 "('VTV Công Nghệ', 'https://vtv.vn/cong-nghe.rss')," +
                 "('VTV Thế Giới', 'https://vtv.vn/the-gioi/the-gioi-do-day.rss')," +

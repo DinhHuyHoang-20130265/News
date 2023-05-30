@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.news.MainActivity;
 import com.example.news.R;
+import com.example.news.SavedActivity;
 import com.example.news.dao.NewsDAO;
 import com.example.news.models.News;
 
