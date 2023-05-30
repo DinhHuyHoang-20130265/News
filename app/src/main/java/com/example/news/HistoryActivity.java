@@ -1,7 +1,9 @@
 package com.example.news;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,16 @@ public class HistoryActivity extends AppCompatActivity {
             openDialog(ItemLists.get(i));
             return false;
         });
+    }
+
+    public void initHistory() {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (sharedPref.getString("history", null) == null) {
+            List<Item> items = new ArrayList<>();
+            editor.putString("history", new Gson().toJson(items));
+            editor.apply();
+        }
     }
 
     public void openDialog(Item item) {
