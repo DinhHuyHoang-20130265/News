@@ -30,21 +30,7 @@ public class NewsDAO {
         values.put("date", item.getDate());
         values.put("linkImg", item.getLinkImg());
         try {
-            if (db.insert("saved", null, values) != -1) ;
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean insertHistory(Item item) {
-        ContentValues values = new ContentValues();
-        values.put("title", item.getTitle());
-        values.put("link", item.getLink());
-        values.put("date", item.getDate());
-        values.put("linkImg", item.getLinkImg());
-        try {
-            if (db.insert("history", null, values) != -1) ;
+            if (db.insert("Saved", null, values) != -1) ;
             return true;
         } catch (Exception e) {
             return false;
@@ -112,6 +98,7 @@ public class NewsDAO {
         }
         return list;
     }
+
     @SuppressLint("Range")
     private List<Item> getDataSaved(String sql, String... selectionArgs) {
         List<Item> list = new ArrayList<>();
@@ -120,14 +107,15 @@ public class NewsDAO {
             Item obj = new Item();
             obj.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             obj.setLink(cursor.getString(cursor.getColumnIndex("link")));
-            obj.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            obj.setDate(cursor.getString(cursor.getColumnIndex("dPost")));
             obj.setLinkImg(cursor.getString(cursor.getColumnIndex("linkImg")));
             list.add(obj);
         }
         return list;
     }
+
     public List<Item> getSaved() {
-        String sql = "SELECT * FROM saved";
+        String sql = "SELECT * FROM " + "Saved";
         return getDataSaved(sql);
     }
 }

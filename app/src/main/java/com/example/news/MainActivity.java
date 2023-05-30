@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -67,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
                     mDrawerLayout.closeDrawers();
                     // Add code here to update the UI based on the item selected
                     // For example, swap UI fragments here
+                    switch (menuItem.toString()) {
+                        case "Đã lưu": {
+                            Intent intent = new Intent(MainActivity.this, SavedActivity.class);
+                            startActivity(intent);
+                            break;
+                        }
+                        case "Đã xem": {
+                            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
                     return true;
                 });
 
@@ -99,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
-            return true;}
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

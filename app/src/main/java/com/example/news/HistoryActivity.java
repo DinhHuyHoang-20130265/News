@@ -57,13 +57,7 @@ public class HistoryActivity extends AppCompatActivity {
         btn_add = dialog.findViewById(R.id.btn_add);
         NewsDAO dao = new NewsDAO(HistoryActivity.this);
         btn_add.setOnClickListener(view -> {
-            if (dao.insertHistory(item)) {
-                Toast.makeText(getApplicationContext(), "thêm thành công", Toast.LENGTH_SHORT).show();
-                // UpdateLV();
-                dialog.dismiss();
-            } else {
-                Toast.makeText(getApplicationContext(), "lỗi", Toast.LENGTH_SHORT).show();
-            }
+
         });
         dialog.show();
     }

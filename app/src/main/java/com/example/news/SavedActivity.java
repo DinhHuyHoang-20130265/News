@@ -29,20 +29,22 @@ import java.util.List;
 
 public class SavedActivity extends AppCompatActivity {
     ListView lv;
-    public List<Item> ItemLists = new ArrayList<>();
+    List<Item> ItemLists = new ArrayList<>();
     Dialog dialog;
     Button btn_add, btn_cancel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved);
         Intent intent = getIntent();
-      //  lv = findViewById(R.id.lv_saved);
-       // UpdateLV();
+        lv = findViewById(R.id.lv_saved);
+        UpdateLV();
     }
+
     public void UpdateLV() {
         ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(SavedActivity.this).getSaved();
-        SavedAdapter adapter = new SavedAdapter(getApplicationContext(),SavedActivity.this, list);
+        SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, list);
         lv.setAdapter(adapter);
     }
 
@@ -62,12 +64,12 @@ public class SavedActivity extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
-            if (v == null){
+            if (v == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = inflater.inflate(R.layout.item_newss, null);
             }
             final Item item = list.get(position);
-            if (v != null){
+            if (v != null) {
                 ImageView iv_news = v.findViewById(R.id.iv_news);
                 TextView tv_title_item_news = v.findViewById(R.id.tv_title_item_news);
                 TextView tv_link_news = v.findViewById(R.id.iv_news);
