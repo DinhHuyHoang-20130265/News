@@ -2,6 +2,7 @@ package com.example.news;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,11 +12,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.news.adapter.NewsAdapter;
 import com.example.news.adapter.News_Adapter;
+import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
+import com.example.news.models.News;
 import com.example.news.xmlpullparser.XmlPullParserHandler;
 
 import java.io.IOException;
@@ -24,11 +29,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NewsActivity extends AppCompatActivity {
     ListView lv;
     public List<Item> ItemLists = new ArrayList<>();
     String link;
+    Dialog dialog;
+    Button btn_save, btn_cancel;
+    NewsDAO dao;
+    News_Adapter adapter;
+    ArrayList<News> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +60,13 @@ public class NewsActivity extends AppCompatActivity {
             }
 
         });
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                saveDialog(i);
+                return true;
+            }
+        });
     }
     public boolean checkInternet(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -64,6 +82,20 @@ public class NewsActivity extends AppCompatActivity {
         Intent intent = new Intent(NewsActivity.this, WebViewActivity.class);
         intent.putExtra("linknews", ItemLists.get(i).getLink());
         startActivity(intent);
+    }
+
+    public void saveDialog(int i) {
+        dialog = new Dialog(NewsActivity.this);
+        dialog.setContentView(R.layout.dialog_save);
+        btn_save = dialog.findViewById(R.id.btn_save);
+        btn_cancel = dialog.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(view -> dialog.dismiss());
+        btn_save.setOnClickListener(view -> {
+            dao.insertSaved((Item) lv.getItemAtPosition(i));
+            Toast.makeText(getApplicationContext(), "lưu thành công", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     public void downloadNew(){

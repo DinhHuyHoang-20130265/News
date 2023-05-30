@@ -112,4 +112,22 @@ public class NewsDAO {
         }
         return list;
     }
+    @SuppressLint("Range")
+    private List<Item> getDataSaved(String sql, String... selectionArgs) {
+        List<Item> list = new ArrayList<>();
+        Cursor cursor = db.rawQuery(sql, selectionArgs);
+        while (cursor.moveToNext()) {
+            Item obj = new Item();
+            obj.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            obj.setLink(cursor.getString(cursor.getColumnIndex("link")));
+            obj.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            obj.setLinkImg(cursor.getString(cursor.getColumnIndex("linkImg")));
+            list.add(obj);
+        }
+        return list;
+    }
+    public List<Item> getSaved() {
+        String sql = "SELECT * FROM saved";
+        return getDataSaved(sql);
+    }
 }
