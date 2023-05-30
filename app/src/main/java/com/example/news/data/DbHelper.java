@@ -20,7 +20,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String table_news = "create table News(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, link TEXT NOT NULL)";
         db.execSQL(table_news);
-        String table_saved = "create table Saved(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT NOT NULL, dPost TEXT NOT NULL, linkImg TEXT NOT NULL)";
+        String table_saved = "create table Saved(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT NOT NULL, date TEXT NOT NULL, linkImg TEXT NOT NULL)";
         db.execSQL(table_saved);
         String data = "INSERT INTO News(name, link) VALUES " +
                 "('VTV Công Nghệ', 'https://vtv.vn/cong-nghe.rss')," +
