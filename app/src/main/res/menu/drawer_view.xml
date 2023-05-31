@@ -13,5 +13,13 @@
             android:id="@+id/login"
             android:icon="@drawable/user"
             android:title="Đã xem" />
+        <item
+            android:id="@+id/users"
+            android:icon="@drawable/user"
+            android:title="QL người dùng" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/logout"
+            android:title="Đăng xuất" />
     </group>
 </menu>
