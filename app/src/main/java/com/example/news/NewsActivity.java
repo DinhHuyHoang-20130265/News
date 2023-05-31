@@ -21,7 +21,9 @@ import android.widget.Toast;
 
 import com.example.news.adapter.News_Adapter;
 import com.example.news.dao.NewsDAO;
+import com.example.news.data.FirebaseData;
 import com.example.news.models.Item;
+import com.example.news.models.User;
 import com.example.news.xmlpullparser.XmlPullParserHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -123,7 +125,7 @@ public class NewsActivity extends AppCompatActivity {
             try {
                 ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(NewsActivity.this).getSaved();
                 if (!list.contains(ItemLists.get(i))) {
-                    dao.insertSaved(ItemLists.get(i));
+                    new FirebaseData().insertSaved(ItemLists.get(i), getUser());
                     Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Bạn đã lưu tin tức này rồi !", Toast.LENGTH_SHORT).show();
@@ -134,6 +136,13 @@ public class NewsActivity extends AppCompatActivity {
             dialog.dismiss();
         });
         dialog.show();
+    }
+
+    public User getUser() {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        Type type = new TypeToken<User>() {
+        }.getType();
+        return new Gson().fromJson(sharedPref.getString("user", null), type);
     }
 
     public void downloadNew() {

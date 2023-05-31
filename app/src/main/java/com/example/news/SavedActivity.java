@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.news.adapter.NewsAdapter;
 import com.example.news.dao.NewsDAO;
+import com.example.news.data.FirebaseData;
 import com.example.news.models.Item;
+import com.example.news.models.News;
+import com.example.news.models.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
@@ -37,13 +44,13 @@ public class SavedActivity extends AppCompatActivity {
     Button btn_remove, btn_cancel;
     NewsDAO dao;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved);
         lv = findViewById(R.id.lv_saved);
         UpdateLV();
-        ItemLists = new NewsDAO(SavedActivity.this).getSaved();
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
             addToHistory(i);
             openLink(i);
@@ -62,6 +69,7 @@ public class SavedActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void removeItemDialog(int i) {
         dialog = new Dialog(SavedActivity.this);
         dialog.setContentView(R.layout.dialog_del);
@@ -71,8 +79,9 @@ public class SavedActivity extends AppCompatActivity {
         btn_remove.setOnClickListener(view -> {
             try {
                 Item item = ItemLists.get(i);
-                dao.deleteSaved(item);
+                new FirebaseData().deleteSaved(item, getUser());
             } catch (Exception e) {
+                Log.d("Super error", e.toString());
                 e.printStackTrace();
             }
             Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
@@ -80,6 +89,13 @@ public class SavedActivity extends AppCompatActivity {
             UpdateLV();
         });
         dialog.show();
+    }
+
+    public User getUser() {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        Type type = new TypeToken<User>() {
+        }.getType();
+        return new Gson().fromJson(sharedPref.getString("user", null), type);
     }
 
     public void addToHistory(int i) {
@@ -95,14 +111,19 @@ public class SavedActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void UpdateLV() {
-        ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(SavedActivity.this).getSaved();
-        if (!list.isEmpty()) {
+        FirebaseData firebaseData = new FirebaseData();
+        firebaseData.getSaved(getUser()).thenAccept(newsList -> {
+            ItemLists = newsList;
             TextView empty = findViewById(R.id.empty);
             empty.setVisibility(View.INVISIBLE);
-            SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, list);
+            SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, (ArrayList<Item>) newsList);
             lv.setAdapter(adapter);
-        }
+        }).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+        });
     }
 
     public class SavedAdapter extends ArrayAdapter<Item> {

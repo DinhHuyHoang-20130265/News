@@ -1,5 +1,6 @@
 package com.example.news;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,13 +27,19 @@ import android.widget.Toast;
 
 import com.example.news.adapter.NewsAdapter;
 import com.example.news.dao.NewsDAO;
+import com.example.news.data.FirebaseData;
 import com.example.news.models.Item;
 import com.example.news.models.News;
+import com.example.news.models.User;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,13 +55,17 @@ public class MainActivity extends AppCompatActivity {
     NewsDAO dao;
     ArrayList<News> list;
     private DrawerLayout mDrawerLayout;
+    FirebaseData firebaseData = new FirebaseData();
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         lv_main = findViewById(R.id.lv_main);
         view_add = findViewById(R.id.view_add);
+
+        firebaseData = new FirebaseData();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,30 +74,40 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        Type type = new TypeToken<User>() {
+        }.getType();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        User user = new Gson().fromJson(sharedPref.getString("user", null), type);
+        if (user == null) {
+            user = new User("123", "Hoang", "123123", 0);
+            editor.putString("user", new Gson().toJson(user));
+            editor.apply();
+        }
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                menuItem -> {
-                    // set item as selected to persist highlight
-                    menuItem.setChecked(true);
-                    // close drawer when item is tapped
-                    mDrawerLayout.closeDrawers();
-                    // Add code here to update the UI based on the item selected
-                    // For example, swap UI fragments here
-                    switch (menuItem.toString()) {
-                        case "Đã lưu": {
-                            Intent intent = new Intent(MainActivity.this, SavedActivity.class);
-                            startActivity(intent);
-                            break;
-                        }
-                        case "Đã xem": {
-                            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-                            startActivity(intent);
-                            break;
-                        }
-                    }
-                    return true;
-                });
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            // set item as selected to persist highlight
+            menuItem.setChecked(true);
+            // close drawer when item is tapped
+            mDrawerLayout.closeDrawers();
+            // Add code here to update the UI based on the item selected
+            // For example, swap UI fragments here
+            switch (menuItem.toString()) {
+                case "Đã lưu": {
+                    Intent intent = new Intent(MainActivity.this, SavedActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case "Đã xem": {
+                    Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+            }
+            return true;
+        });
 
         dao = new NewsDAO(MainActivity.this);
         UpdateLV();
@@ -124,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void openDialog() {
         dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.dialog_add);
@@ -139,13 +162,11 @@ public class MainActivity extends AppCompatActivity {
                 News news = new News();
                 news.setName(name);
                 news.setLink(link);
-                if (dao.insert(news)) {
-                    Toast.makeText(getApplicationContext(), "thêm thành công", Toast.LENGTH_SHORT).show();
-                    UpdateLV();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(getApplicationContext(), "lỗi", Toast.LENGTH_SHORT).show();
-                }
+                firebaseData.insert(news);
+                Toast.makeText(getApplicationContext(), "thêm thành công", Toast.LENGTH_SHORT).show();
+                UpdateLV();
+                dialog.dismiss();
+
             }
         });
         dialog.show();
@@ -178,15 +199,14 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo[] networkInfo = conManager.getAllNetworkInfo();
         for (NetworkInfo netInfo : networkInfo) {
             if (netInfo.getTypeName().equalsIgnoreCase("WIFI"))
-                if (netInfo.isConnected())
-                    wifiAvailable = true;
+                if (netInfo.isConnected()) wifiAvailable = true;
             if (netInfo.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (netInfo.isConnected())
-                    mobileAvailable = true;
+                if (netInfo.isConnected()) mobileAvailable = true;
         }
         return wifiAvailable || mobileAvailable;
     }
 
+    @SuppressLint("NewApi")
     public void delete(int id) {
         dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.dialog_del);
@@ -194,22 +214,24 @@ public class MainActivity extends AppCompatActivity {
         btn_del = dialog.findViewById(R.id.btn_del);
         btn_cancel.setOnClickListener(view -> dialog.dismiss());
         btn_del.setOnClickListener(view -> {
-            if (dao.delete(id)) {
-                Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
-                UpdateLV();
-            } else {
-                Toast.makeText(getApplicationContext(), "lỗi", Toast.LENGTH_SHORT).show();
-            }
+            firebaseData.delete(id);
+            Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
+            UpdateLV();
         });
         dialog.show();
-        UpdateLV();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void UpdateLV() {
-        list = (ArrayList<News>) dao.getALL();
-        adapter = new NewsAdapter(getApplicationContext(), MainActivity.this, list);
-        lv_main.setAdapter(adapter);
+        firebaseData.getALL().thenAccept(newsList -> {
+            list = (ArrayList<News>) newsList;
+            adapter = new NewsAdapter(getApplicationContext(), MainActivity.this, list);
+            lv_main.setAdapter(adapter);
+        }).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+        });
     }
 
     public static void deleteCache(Context context) {
