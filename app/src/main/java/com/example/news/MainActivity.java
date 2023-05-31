@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -24,12 +25,15 @@ import android.widget.Toast;
 
 import com.example.news.adapter.NewsAdapter;
 import com.example.news.dao.NewsDAO;
+import com.example.news.models.Item;
 import com.example.news.models.News;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,8 +96,10 @@ public class MainActivity extends AppCompatActivity {
         lv_main.setOnItemClickListener((adapterView, view, i, l) -> {
             if (checkNetwork()) {
                 String link = list.get(i).getLink();
+                String namecate = list.get(i).getName();
                 if (!link.isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+                    intent.putExtra("nameCate", namecate);
                     intent.putExtra("link", link);
                     startActivity(intent);
                 }
@@ -106,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             delete(list.get(i).getId());
             return true;
         });
+        initHistory();
     }
 
     @Override
@@ -152,6 +159,16 @@ public class MainActivity extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.setView(v);
         toast.show();
+    }
+
+    public void initHistory() {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (sharedPref.getString("history", null) == null) {
+            List<Item> items = new ArrayList<>();
+            editor.putString("history", new Gson().toJson(items));
+            editor.apply();
+        }
     }
 
     private boolean checkNetwork() {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +43,11 @@ public class SavedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_saved);
         lv = findViewById(R.id.lv_saved);
         UpdateLV();
-        ItemLists = (ArrayList<Item>) new NewsDAO(SavedActivity.this).getSaved();
-        lv.setOnItemClickListener((adapterView, view, i, l) -> openLink(i));
+        ItemLists = new NewsDAO(SavedActivity.this).getSaved();
+        lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            addToHistory(i);
+            openLink(i);
+        });
         lv.setOnItemLongClickListener((adapterView, view, i, l) -> {
             removeItemDialog(i);
             return true;
@@ -49,7 +56,7 @@ public class SavedActivity extends AppCompatActivity {
     }
 
     public void openLink(int i) {
-        Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "đang truy cập vào tin tức", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(SavedActivity.this, WebViewActivity.class);
         intent.putExtra("linknews", ItemLists.get(i).getLink());
         startActivity(intent);
@@ -73,6 +80,19 @@ public class SavedActivity extends AppCompatActivity {
             UpdateLV();
         });
         dialog.show();
+    }
+
+    public void addToHistory(int i) {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Type type = new TypeToken<List<Item>>() {
+        }.getType();
+        List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
+        if (!items.contains(ItemLists.get(i))) {
+            items.add(ItemLists.get(i));
+            editor.putString("history", new Gson().toJson(items));
+            editor.apply();
+        }
     }
 
     public void UpdateLV() {
