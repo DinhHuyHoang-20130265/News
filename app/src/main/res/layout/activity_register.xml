@@ -53,13 +53,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/editTextTK"
+                android:id="@+id/editMk"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
                 android:ems="10"
-                android:hint="Tên tài khoản "
+                android:hint="Mật khẩu "
                 android:inputType="textPersonName"
                 android:paddingLeft="20dp"
                 android:paddingTop="13dp"
@@ -79,7 +79,7 @@
                 android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
                 android:ems="10"
-                android:hint="Mật khẩu"
+                android:hint="Xác nhân mật khẩu"
                 android:inputType="textPassword"
                 android:paddingLeft="20dp"
                 android:paddingTop="13dp"
@@ -90,27 +90,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/editTextTenChuTK"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/editTextTenChuTK"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTK" />
+                app:layout_constraintTop_toBottomOf="@+id/editMk" />
 
-            <EditText
-                android:id="@+id/editTextXNMK"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:drawablePadding="10dp"
-                android:ems="10"
-                android:hint="Xác nhận mật khẩu"
-                android:inputType="textPassword"
-                android:paddingLeft="20dp"
-                android:paddingTop="13dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/editTextTenChuTK"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/editTextTenChuTK"
-                app:layout_constraintTop_toBottomOf="@+id/editTextMK" />
+
 
             <EditText
                 android:id="@+id/editTextTenChuTK"
@@ -121,7 +103,7 @@
                 android:layout_marginEnd="24dp"
                 android:drawablePadding="10dp"
                 android:ems="10"
-                android:hint="Họ và tên "
+                android:hint="Tên tài khoản "
                 android:inputType="textPersonName"
                 android:paddingLeft="20dp"
                 android:paddingTop="13dp"
@@ -135,25 +117,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
 
-            <EditText
-                android:id="@+id/editTextSDT"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:drawablePadding="10dp"
-                android:ems="10"
-                android:hint="Số điện thoại"
-                android:inputType="numberDecimal"
-                android:paddingLeft="20dp"
-                android:paddingTop="13dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="13dp"
-                android:textColorHint="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/editTextTenChuTK"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/editTextTenChuTK"
-                app:layout_constraintTop_toBottomOf="@+id/editTextXNMK" />
-
             <Button
                 android:id="@+id/buttonDangKy"
                 android:layout_width="125dp"
@@ -164,8 +127,8 @@
                 android:text="Đăng ký"
                 android:textColor="@color/white"
                 android:textSize="20dp"
-                app:layout_constraintStart_toStartOf="@+id/editTextSDT"
-                app:layout_constraintTop_toBottomOf="@+id/editTextSDT" />
+                app:layout_constraintStart_toStartOf="@+id/editTextMK"
+                app:layout_constraintTop_toBottomOf="@+id/editTextMK" />
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
