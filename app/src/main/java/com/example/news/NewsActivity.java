@@ -1,5 +1,6 @@
 package com.example.news;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -10,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -45,6 +47,7 @@ public class NewsActivity extends AppCompatActivity {
     NewsDAO dao;
     private EditText editTextSearch;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +119,7 @@ public class NewsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void saveDialog(int i) {
         dialog = new Dialog(NewsActivity.this);
         dialog.setContentView(R.layout.dialog_save);
@@ -124,13 +128,14 @@ public class NewsActivity extends AppCompatActivity {
         btn_cancel.setOnClickListener(view -> dialog.dismiss());
         btn_save.setOnClickListener(view -> {
             try {
-                ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(NewsActivity.this).getSaved();
-                if (!list.contains(ItemLists.get(i))) {
-                    new FirebaseData().insertSaved(ItemLists.get(i), getUser());
-                    Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Bạn đã lưu tin tức này rồi !", Toast.LENGTH_SHORT).show();
-                }
+                new FirebaseData().getSaved(getUser()).thenAccept(itemL -> {
+                    if (!itemL.contains(ItemLists.get(i))) {
+                        new FirebaseData().insertSaved(ItemLists.get(i), getUser());
+                        Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Bạn đã lưu tin tức này rồi !", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
