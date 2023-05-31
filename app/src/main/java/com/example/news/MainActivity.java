@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         User user = new Gson().fromJson(sharedPref.getString("user", null), type);
         if (user == null) {
-            user = new User("123", "Hoang", "123123", 0);
-            editor.putString("user", new Gson().toJson(user));
+            editor.putString("user", new Gson().toJson(null));
             editor.apply();
         }
 

@@ -55,7 +55,8 @@ android:layout_height="match_parent">
                 app:layout_constraintEnd_toEndOf="@+id/ed_pass"
                 app:layout_constraintHorizontal_bias="0.963"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ed_pass" />
+                app:layout_constraintTop_toBottomOf="@+id/ed_pass"
+                tools:ignore="TextSizeCheck" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -142,7 +143,7 @@ android:layout_height="match_parent">
                 android:layout_marginTop="24dp"
                 android:background="#E4C72B"
                 android:text="Đăng nhập"
-                android:textColor="@color/white"
+                android:textColor="#546E7A"
                 android:textSize="20dp"
                 app:layout_constraintEnd_toEndOf="@+id/txt_reforpass"
                 app:layout_constraintStart_toStartOf="@+id/ed_pass"
@@ -160,7 +161,8 @@ android:layout_height="match_parent">
                 app:layout_constraintEnd_toStartOf="@+id/txt_reforpass"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/ed_pass"
-                app:layout_constraintTop_toBottomOf="@+id/ed_pass" />
+                app:layout_constraintTop_toBottomOf="@+id/ed_pass"
+                tools:ignore="TextSizeCheck" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
