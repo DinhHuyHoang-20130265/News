@@ -12,6 +12,6 @@
         <item
             android:id="@+id/login"
             android:icon="@drawable/user"
-            android:title="Đã xem" />
+            android:title="Đăng nhập" />
     </group>
 </menu>

@@ -16,7 +16,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,8 +32,6 @@ import com.example.news.models.News;
 import com.example.news.models.User;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -86,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        MenuItem saved = navigationView.getMenu().getItem(0);
+        MenuItem login = navigationView.getMenu().getItem(2);
+        if (getUser() == null) {
+            view_add.setVisibility(View.INVISIBLE);
+            login.setVisible(true);
+            saved.setVisible(false);
+        } else {
+            login.setVisible(false);
+            saved.setVisible(true);
+        }
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             // set item as selected to persist highlight
             menuItem.setChecked(true);
@@ -101,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case "Đã xem": {
                     Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case "Đăng nhập": {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                     break;
                 }
@@ -134,6 +146,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         initHistory();
+    }
+
+    public User getUser() {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        Type type = new TypeToken<User>() {
+        }.getType();
+        return new Gson().fromJson(sharedPref.getString("user", null), type);
     }
 
     @Override

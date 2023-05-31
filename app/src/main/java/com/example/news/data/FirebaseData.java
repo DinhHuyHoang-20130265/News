@@ -19,11 +19,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class FirebaseData {
     private static FirebaseDatabase database;
     private static DatabaseReference myRef;
+    User user = null;
 
     public static FirebaseDatabase getDatabase() {
         if (database == null) {
@@ -199,4 +199,36 @@ public class FirebaseData {
         });
         return true;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public CompletableFuture<User> checkLogin(String user, String pass) {
+        myRef = getDatabase().getReference("Users");
+        CompletableFuture<User> completableFuture = new CompletableFuture<>();
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User u;
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    User value = postSnapshot.getValue(User.class);
+                    u = value;
+                    completableFuture.complete(u);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                completableFuture.completeExceptionally(databaseError.toException());
+            }
+        });
+        return completableFuture;
+    }
+
 }
