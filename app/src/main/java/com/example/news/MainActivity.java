@@ -160,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         lv_main.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            delete(list.get(i).getId());
+            if (getUser() != null && getUser().getType() == 1) {
+                delete(list.get(i).getId());
+            }
             return true;
         });
         initHistory();

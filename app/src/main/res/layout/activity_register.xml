@@ -38,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/img_back_right4"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentBottom="true"
@@ -51,8 +51,8 @@
                 android:src="@drawable/go_back"
                 app:tint="@color/white"
                 tools:ignore="MissingConstraints,TouchTargetSizeCheck"
-                tools:layout_editor_absoluteX="6dp"
-                tools:layout_editor_absoluteY="3dp" />
+                tools:layout_editor_absoluteX="10dp"
+                tools:layout_editor_absoluteY="10dp" />
 
             <TextView
                 android:id="@+id/textView6"

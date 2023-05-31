@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,13 +16,14 @@ import com.google.gson.Gson;
 public class EditUserActivity extends AppCompatActivity {
     Button buttonSua;
     EditText editId, editTextType, editTextMK, editTextTK;
+    ImageView img_back_right2;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_account);
 
         buttonSua = findViewById(R.id.buttonSua);
-
+        img_back_right2 = findViewById(R.id.img_back_right2);
         editId = findViewById(R.id.editId);
         editTextType = findViewById(R.id.editTextType);
         editTextMK = findViewById(R.id.editTextMK);
@@ -31,7 +33,7 @@ public class EditUserActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         User user = gson.fromJson(getIntent().getStringExtra("user"), User.class);
-
+        img_back_right2.setOnClickListener(view -> onBackPressed());
         editId.setText(user.getId() + "");
         editTextType.setText(user.getType() + "");
         editTextMK.setText(user.getPassword() + "");
