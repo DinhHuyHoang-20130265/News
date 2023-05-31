@@ -167,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         initHistory();
-
-
     }
 
     public User getUser() {
@@ -207,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "thêm thành công", Toast.LENGTH_SHORT).show();
                 UpdateLV();
                 dialog.dismiss();
-
             }
         });
         dialog.show();
