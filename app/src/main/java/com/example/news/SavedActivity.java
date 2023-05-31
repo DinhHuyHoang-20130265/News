@@ -42,7 +42,7 @@ public class SavedActivity extends AppCompatActivity {
     List<Item> ItemLists = new ArrayList<>();
     Dialog dialog;
     Button btn_remove, btn_cancel;
-    NewsDAO dao;
+    ImageView goback;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -59,7 +59,9 @@ public class SavedActivity extends AppCompatActivity {
             removeItemDialog(i);
             return true;
         });
-        dao = new NewsDAO(SavedActivity.this);
+
+        goback = findViewById(R.id.goback);
+        goback.setOnClickListener(v -> onBackPressed());
     }
 
     public void openLink(int i) {
@@ -87,6 +89,7 @@ public class SavedActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
             UpdateLV();
+            lv.invalidate();
         });
         dialog.show();
     }
@@ -117,7 +120,9 @@ public class SavedActivity extends AppCompatActivity {
         firebaseData.getSaved(getUser()).thenAccept(newsList -> {
             ItemLists = newsList;
             TextView empty = findViewById(R.id.empty);
-            empty.setVisibility(View.INVISIBLE);
+            if (!ItemLists.isEmpty()) {
+                empty.setVisibility(View.INVISIBLE);
+            }
             SavedAdapter adapter = new SavedAdapter(getApplicationContext(), SavedActivity.this, (ArrayList<Item>) newsList);
             lv.setAdapter(adapter);
         }).exceptionally(throwable -> {

@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -80,6 +81,7 @@ public class FirebaseData {
     public static boolean insert(News news) {
         myRef = getDatabase().getReference("NewsData");
         String id = myRef.push().getKey();
+        assert id != null;
         news.setId(new BigInteger(id.getBytes()).intValue());
         myRef.child(id).setValue(news);
         return true;
@@ -91,10 +93,12 @@ public class FirebaseData {
         // Read from the database
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     News value = postSnapshot.getValue(News.class);
-                    if (value.getId() == id) myRef.child(postSnapshot.getKey()).removeValue();
+                    assert value != null;
+                    if (value.getId() == id)
+                        myRef.child(Objects.requireNonNull(postSnapshot.getKey())).removeValue();
                 }
             }
 
@@ -113,18 +117,19 @@ public class FirebaseData {
         myRef = getDatabase().getReference("NewsData");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<News> newsList = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     News value = postSnapshot.getValue(News.class);
                     newsList.add(value);
+                    assert value != null;
                     Log.d("Value", value.toString());
                 }
                 completableFuture.complete(newsList);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 completableFuture.completeExceptionally(databaseError.toException());
             }
         });
@@ -137,9 +142,10 @@ public class FirebaseData {
         // Read from the database
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     News value = postSnapshot.getValue(News.class);
+                    assert value != null;
                     if (value.getId() == id) get[0] = value;
                 }
             }
@@ -160,7 +166,7 @@ public class FirebaseData {
         CompletableFuture<List<Item>> completableFuture = new CompletableFuture<>();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Item> ItemList = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Item value = postSnapshot.getValue(Item.class);
@@ -170,7 +176,7 @@ public class FirebaseData {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 completableFuture.completeExceptionally(databaseError.toException());
             }
         });
@@ -186,8 +192,9 @@ public class FirebaseData {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Item value = postSnapshot.getValue(Item.class);
-                    Log.d("Check equal", value.getId() + ": " + item.getId());
-                    if (value.equals(item)) myRef.child(postSnapshot.getKey()).removeValue();
+                    assert value != null;
+                    if (value.equals(item))
+                        myRef.child(Objects.requireNonNull(postSnapshot.getKey())).removeValue();
                 }
             }
 
@@ -200,13 +207,6 @@ public class FirebaseData {
         return true;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public CompletableFuture<User> checkLogin(String user, String pass) {
@@ -214,17 +214,19 @@ public class FirebaseData {
         CompletableFuture<User> completableFuture = new CompletableFuture<>();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User u;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User u = null;
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     User value = postSnapshot.getValue(User.class);
-                    u = value;
-                    completableFuture.complete(u);
+                    if (value.getUsername().equals(user) && value.getPassword().equals(pass)) {
+                        u = value;
+                    }
                 }
+                completableFuture.complete(u);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 completableFuture.completeExceptionally(databaseError.toException());
             }
         });
@@ -237,27 +239,74 @@ public class FirebaseData {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean check = false;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean check = true;
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     User value = postSnapshot.getValue(User.class);
-                    if (!value.getUsername().equals(user)) {
-                        check = true;
-
+                    assert value != null;
+                    if (value.getUsername().equals(user)) {
+                        check = false;
                     }
-                    completableFuture.complete(check);
                 }
                 if (check) {
                     String id = myRef.push().getKey();
                     myRef.child(id).setValue(new User(id, user, pass, 0));
                 }
+                completableFuture.complete(check);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 completableFuture.completeExceptionally(databaseError.toException());
             }
         });
         return completableFuture;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public CompletionStage<List<User>> getALLUser() {
+        myRef = getDatabase().getReference("Users");
+        CompletableFuture<List<User>> completableFuture = new CompletableFuture<>();
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<User> ItemList = new ArrayList<>();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    User value = postSnapshot.getValue(User.class);
+                    ItemList.add(value);
+                }
+                completableFuture.complete(ItemList);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                completableFuture.completeExceptionally(databaseError.toException());
+            }
+        });
+        return completableFuture;
+
+    }
+
+    public void deleteUser(User user) {
+        myRef = getDatabase().getReference("Users");
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    User value = postSnapshot.getValue(User.class);
+                    if (value.equals(user))
+                        myRef.child(Objects.requireNonNull(postSnapshot.getKey())).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Error Firebase", "Failed to read value.", error.toException());
+            }
+
+        });
     }
 }

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,10 +27,17 @@ public class RegisterActivity extends AppCompatActivity {
         reg = findViewById(R.id.buttonDangKy);
 
         reg.setOnClickListener(view -> new FirebaseData().checkReg(ed_user.getText().toString(), ed_pass.getText().toString()).thenAccept(check -> {
-            if (check && ed_pass.getText().toString().equals(ed_comfirm.getText().toString())) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
+            if (ed_pass.getText().toString().equals(ed_comfirm.getText().toString())) {
+                if (check) {
+                    Toast.makeText(getApplicationContext(), "Đăng ký thành công, mời bạn đăng nhập", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Tên tài khoản đã có người sử dụng", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "2 mật khẩu không trùng nhau", Toast.LENGTH_SHORT).show();
             }
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
