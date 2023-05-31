@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,16 +14,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.news.adapter.News_Adapter;
 import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
 import com.example.news.xmlpullparser.XmlPullParserHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,8 +54,15 @@ public class NewsActivity extends AppCompatActivity {
         if (checkInternet()) {
             downloadNew();
         }
+        ImageView goback = findViewById(R.id.goback);
+        TextView name = findViewById(R.id.cateView);
 
-        lv.setOnItemClickListener((adapterView, view, i, l) -> openLink(i));
+        goback.setOnClickListener(v -> onBackPressed());
+        name.setText(intent.getStringExtra("nameCate"));
+        lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            addToHistory(i);
+            openLink(i);
+        });
         editTextSearch = findViewById(R.id.editTextSearch);
         Button buttonSearch = findViewById(R.id.buttonSearch);
         buttonSearch.setOnClickListener(v -> {
@@ -73,6 +86,18 @@ public class NewsActivity extends AppCompatActivity {
         lv.setAdapter(adapter);
     }
 
+    public void addToHistory(int i) {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Type type = new TypeToken<List<Item>>() {
+        }.getType();
+        List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
+        if (!items.contains(ItemLists.get(i))) {
+            items.add(ItemLists.get(i));
+            editor.putString("history", new Gson().toJson(items));
+            editor.apply();
+        }
+    }
 
     public boolean checkInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

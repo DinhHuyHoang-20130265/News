@@ -24,8 +24,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -35,7 +37,7 @@ public class HistoryActivity extends AppCompatActivity {
     ListView lv;
     public List<Item> ItemLists = new ArrayList<>();
     Dialog dialog;
-    Button btn_add, btn_cancel;
+    Button btn_del, btn_cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,51 +45,68 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         lv = findViewById(R.id.lv_history);
 
+        UpdateLV();
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            addToHistory(i);
             openLink(i);
         });
-        lv.setOnItemLongClickListener((AdapterView.OnItemLongClickListener) (adapterView, view, i, l) -> {
+        lv.setOnItemLongClickListener((adapterView, view, i, l) -> {
             openDialog(i);
-            return false;
+            return true;
         });
     }
 
     public void openLink(int i) {
-        Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "đang truy cập vào tin tức", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(HistoryActivity.this, WebViewActivity.class);
         intent.putExtra("linknews", ItemLists.get(i).getLink());
         startActivity(intent);
     }
 
-    public void initHistory() {
+    public void addToHistory(int i) {
         SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        if (sharedPref.getString("history", null) == null) {
-            List<Item> items = new ArrayList<>();
+        Type type = new TypeToken<List<Item>>() {
+        }.getType();
+        List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
+        if (!items.contains(ItemLists.get(i))) {
+            items.add(ItemLists.get(i));
             editor.putString("history", new Gson().toJson(items));
             editor.apply();
-        } else {
-
         }
     }
 
     public void openDialog(int i) {
         dialog = new Dialog(HistoryActivity.this);
-        dialog.setContentView(R.layout.dialog_add);
-        btn_add = dialog.findViewById(R.id.btn_add);
-        NewsDAO dao = new NewsDAO(HistoryActivity.this);
-        btn_add.setOnClickListener(view -> {
-
+        dialog.setContentView(R.layout.dialog_del);
+        btn_del = dialog.findViewById(R.id.btn_del);
+        btn_cancel = dialog.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(v -> dialog.dismiss());
+        btn_del.setOnClickListener(view -> {
+            SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Type type = new TypeToken<List<Item>>() {
+            }.getType();
+            List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
+            items.remove(i);
+            editor.putString("history", new Gson().toJson(items));
+            editor.apply();
+            UpdateLV();
+            Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
         });
         dialog.show();
     }
 
     public void UpdateLV() {
-        ArrayList<Item> list = (ArrayList<Item>) new NewsDAO(HistoryActivity.this).getSaved();
-        if (!list.isEmpty()) {
+        SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
+        Type type = new TypeToken<List<Item>>() {
+        }.getType();
+        List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
+        if (!items.isEmpty()) {
             TextView empty = findViewById(R.id.empty);
             empty.setVisibility(View.INVISIBLE);
-            HistoryAdapter adapter = new HistoryAdapter(getApplicationContext(), HistoryActivity.this, list);
+            HistoryAdapter adapter = new HistoryAdapter(getApplicationContext(), HistoryActivity.this, (ArrayList<Item>) items);
             lv.setAdapter(adapter);
         }
     }
