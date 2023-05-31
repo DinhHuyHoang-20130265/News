@@ -5,22 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.news.adapter.NewsAdapter;
 import com.example.news.data.FirebaseData;
-import com.example.news.models.News;
 import com.example.news.models.User;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
     TextView ed_user, ed_pass;
