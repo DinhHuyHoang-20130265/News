@@ -1,5 +1,6 @@
 package com.example.news;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -93,6 +94,7 @@ public class WebViewActivity extends AppCompatActivity
         configWebView();
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void configWebView() {
         webSettings.setRenderPriority(WebSettings.RenderPriority.LOW);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -101,6 +103,7 @@ public class WebViewActivity extends AppCompatActivity
         webSettings.setGeolocationEnabled(false);
         webSettings.setNeedInitialFocus(false);
         webSettings.setSaveFormData(false);
+        webSettings.setJavaScriptEnabled(true);
     }
 
     private class MyAsyncTask extends AsyncTask<Void, Void, String> {
@@ -118,14 +121,21 @@ public class WebViewActivity extends AppCompatActivity
 
             String content = null;
             try {
-                document = Jsoup.connect(url).get();
-                contentRead += document.selectFirst("h1.title_detail").text() + " ";
-                Elements ps = document.select("#entry-body p");
-                for (Element e : ps) {
-                    contentRead += e.text() + " ";
+                if (link.contains("thoi-tiet")) {
+                    document = Jsoup.connect(url).get();
+                    Element element = document.selectFirst("body");
+                    content = element.toString();
+                    contentRead = "";
+                } else {
+                    document = Jsoup.connect(url).get();
+                    contentRead += document.selectFirst("h1.title_detail").text() + " ";
+                    Elements ps = document.select("#entry-body p");
+                    for (Element e : ps) {
+                        contentRead += e.text() + " ";
+                    }
+                    Elements element = document.getElementsByClass("noidung");
+                    content = element.get(0).toString();
                 }
-                Elements element = document.getElementsByClass("noidung");
-                content = element.get(0).toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "415790309441",
+    "firebase_url": "https://news-1508-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "news-1508",
+    "storage_bucket": "news-1508.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415790309441:android:e0e360d7ba7b27d972a6c0",
+        "android_client_info": {
+          "package_name": "com.example.news"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAnMHxAmK5F4vsJ6JmpyBImoMGlr9n43Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
