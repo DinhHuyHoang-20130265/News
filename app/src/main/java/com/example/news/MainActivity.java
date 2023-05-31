@@ -30,8 +30,10 @@ import com.example.news.data.FirebaseData;
 import com.example.news.models.Item;
 import com.example.news.models.News;
 import com.example.news.models.User;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -42,7 +44,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
+    String api = "9ebafc5f12a441ceaf0f0cda79ffe591";
     ListView lv_main;
     View view_add;
     Dialog dialog;
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem login = navigationView.getMenu().getItem(2);
         MenuItem quanly = navigationView.getMenu().getItem(3);
         MenuItem logout = navigationView.getMenu().getItem(4);
-
+        MenuItem weather = navigationView.getMenu().getItem(5);
         if (getUser() == null) {
             view_add.setVisibility(View.INVISIBLE);
             login.setVisible(true);
@@ -170,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         initHistory();
+
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     public User getUser() {
