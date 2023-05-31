@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             if (getUser().getType() == 1) {
                 quanly.setVisible(true);
+            } else {
+                quanly.setVisible(false);
             }
             login.setVisible(false);
             saved.setVisible(true);
@@ -128,8 +130,9 @@ public class MainActivity extends AppCompatActivity {
                 case "Đăng xuất": {
                     editor.putString("user", new Gson().toJson(null));
                     editor.apply();
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(getIntent());
                     break;
                 }
                 case "QL người dùng": {
@@ -257,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
             UpdateLV();
+            lv_main.invalidate();
         });
         dialog.show();
     }

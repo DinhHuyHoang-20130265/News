@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,10 +36,13 @@ public class LoginActivity extends AppCompatActivity {
         });
         login.setOnClickListener(view -> new FirebaseData().checkLogin(ed_user.getText().toString(), ed_pass.getText().toString()).thenAccept(user -> {
             if (user != null) {
+                Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                 setUser(user);
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "Tên tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
             }
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
