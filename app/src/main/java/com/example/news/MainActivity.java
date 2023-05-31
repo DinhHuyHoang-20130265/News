@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
     ListView lv_main;
     View view_add;
     Dialog dialog;
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         MenuItem login = navigationView.getMenu().getItem(2);
         MenuItem quanly = navigationView.getMenu().getItem(3);
         MenuItem logout = navigationView.getMenu().getItem(4);
-
         if (getUser() == null) {
             view_add.setVisibility(View.INVISIBLE);
             login.setVisible(true);
@@ -95,11 +93,7 @@ public class MainActivity extends AppCompatActivity {
             quanly.setVisible(false);
             logout.setVisible(false);
         } else {
-            if (getUser().getType() == 1) {
-                quanly.setVisible(true);
-            } else {
-                quanly.setVisible(false);
-            }
+            quanly.setVisible(getUser().getType() == 1);
             login.setVisible(false);
             saved.setVisible(true);
             logout.setVisible(true);
@@ -166,10 +160,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         lv_main.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            delete(list.get(i).getId());
+            if (getUser() != null && getUser().getType() == 1) {
+                delete(list.get(i).getId());
+            }
             return true;
         });
         initHistory();
+
+
     }
 
     public User getUser() {
@@ -204,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                 News news = new News();
                 news.setName(name);
                 news.setLink(link);
-                firebaseData.insert(news);
+                FirebaseData.insert(news);
                 Toast.makeText(getApplicationContext(), "thêm thành công", Toast.LENGTH_SHORT).show();
                 UpdateLV();
                 dialog.dismiss();

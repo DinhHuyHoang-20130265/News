@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import com.example.news.data.FirebaseData;
 public class RegisterActivity extends AppCompatActivity {
     TextView ed_user, ed_pass, ed_comfirm;
     Button reg;
+    ImageView img_back_right4;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
         ed_comfirm = findViewById(R.id.editTextMK);
         reg = findViewById(R.id.buttonDangKy);
 
+        img_back_right4 = findViewById(R.id.img_back_right4);
+        img_back_right4.setOnClickListener(view -> onBackPressed());
         reg.setOnClickListener(view -> new FirebaseData().checkReg(ed_user.getText().toString(), ed_pass.getText().toString()).thenAccept(check -> {
             if (ed_pass.getText().toString().equals(ed_comfirm.getText().toString())) {
                 if (check) {

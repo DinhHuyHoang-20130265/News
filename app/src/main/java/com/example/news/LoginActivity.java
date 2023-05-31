@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.google.gson.Gson;
 public class LoginActivity extends AppCompatActivity {
     TextView ed_user, ed_pass;
     Button login;
+    ImageView img_back_right3;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
 
         ed_user = findViewById(R.id.ed_user);
         ed_pass = findViewById(R.id.ed_pass);
+        img_back_right3 = findViewById(R.id.img_back_right3);
+        img_back_right3.setOnClickListener(view -> onBackPressed());
 
         login = findViewById(R.id.btn_login);
         TextView reg = findViewById(R.id.create);

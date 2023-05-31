@@ -30,7 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="@+id/create"
-            app:layout_constraintTop_toBottomOf="@+id/create">
+            app:layout_constraintTop_toBottomOf="@+id/create"
+            tools:ignore="ExtraText">
 
 
             <ImageView
@@ -48,8 +49,8 @@
                 android:src="@drawable/go_back"
                 app:tint="@color/white"
                 tools:ignore="MissingConstraints,TouchTargetSizeCheck"
-                tools:layout_editor_absoluteX="3dp"
-                tools:layout_editor_absoluteY="5dp" />
+                tools:layout_editor_absoluteX="10dp"
+                tools:layout_editor_absoluteY="10dp" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -108,14 +109,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/editTextTK" />
 
             <EditText
-                android:id="@+id/editTextXNMK"
+                android:id="@+id/editTextType"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
                 android:ems="10"
-                android:hint="Xác nhận mật khẩu"
-                android:inputType="textPassword"
+                android:hint="Loại tài khoản"
+                android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingTop="13dp"
                 android:paddingRight="20dp"
@@ -151,17 +152,17 @@
 
 
             <Button
-                android:id="@+id/buttonDangKy"
+                android:id="@+id/buttonSua"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="116dp"
-                android:layout_marginTop="36dp"
                 android:background="#E4C72B"
                 android:text="Sửa"
-                android:textColor="@color/white"
+                android:textColor="#546E7A"
                 android:textSize="20dp"
-                app:layout_constraintStart_toStartOf="@+id/editTextXNMK"
-                app:layout_constraintTop_toBottomOf="@+id/editTextXNMK" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/editTextType"
+                app:layout_constraintStart_toStartOf="@+id/editTextType"
+                app:layout_constraintTop_toTopOf="@+id/editTextTK" />
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
