@@ -38,6 +38,7 @@ public class HistoryActivity extends AppCompatActivity {
     public List<Item> ItemLists = new ArrayList<>();
     Dialog dialog;
     Button btn_del, btn_cancel;
+    ImageView goback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class HistoryActivity extends AppCompatActivity {
             openDialog(i);
             return true;
         });
+        goback = findViewById(R.id.goback);
+        goback.setOnClickListener(v -> onBackPressed());
     }
 
     public void openLink(int i) {
@@ -92,6 +95,7 @@ public class HistoryActivity extends AppCompatActivity {
             editor.putString("history", new Gson().toJson(items));
             editor.apply();
             UpdateLV();
+            lv.invalidate();
             Toast.makeText(getApplicationContext(), "xóa thành công", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
         });

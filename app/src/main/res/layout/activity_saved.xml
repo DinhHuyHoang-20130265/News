@@ -55,13 +55,15 @@
                 android:textSize="15dp"
                 android:textStyle="italic"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="65dp" />
+                tools:layout_editor_absoluteY="65dp"
+                tools:ignore="MissingConstraints" />
 
             <ListView
                 android:id="@+id/lv_saved"
                 android:layout_width="411dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
