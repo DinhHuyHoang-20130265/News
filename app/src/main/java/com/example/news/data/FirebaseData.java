@@ -74,6 +74,7 @@ public class FirebaseData {
     public boolean insertSaved(Item item, User user) {
         myRef = getDatabase().getReference("Saved/" + user.getId());
         String id = myRef.push().getKey();
+        assert id != null;
         myRef.child(id).setValue(item);
         return true;
     }
@@ -299,6 +300,32 @@ public class FirebaseData {
                     User value = postSnapshot.getValue(User.class);
                     if (value.equals(user))
                         myRef.child(Objects.requireNonNull(postSnapshot.getKey())).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Error Firebase", "Failed to read value.", error.toException());
+            }
+
+        });
+    }
+
+    public void updateUser(String id, String name, String pass, int type) {
+        myRef = getDatabase().getReference("Users");
+        // Read from the database
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    User value = postSnapshot.getValue(User.class);
+                    assert value != null;
+                    if (value.getId().equals(id)) {
+                        value.setUsername(name);
+                        value.setPassword(pass);
+                        value.setType(type);
+                        myRef.child(Objects.requireNonNull(postSnapshot.getKey())).setValue(value);
+                    }
                 }
             }
 

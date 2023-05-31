@@ -3,6 +3,7 @@ package com.example.news;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.news.data.FirebaseData;
 import com.example.news.models.User;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +42,16 @@ public class AnalyzeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quanlytk);
         lv = findViewById(R.id.lv_acc);
         UpdateLV();
-        lv.setOnItemClickListener((adapterView, view, i, l) -> UpdateLV());
+        lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent intent = new Intent(this, EditUserActivity.class);
+            String myJson = new Gson().toJson(userList.get(i));
+            intent.putExtra("user", myJson);
+            startActivity(intent);
+        });
 
         lv.setOnItemLongClickListener((adapterView, view, i, l) -> {
             openDialog(i);
-            return false;
+            return true;
         });
 
         goback = findViewById(R.id.goback);
