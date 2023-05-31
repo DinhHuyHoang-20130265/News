@@ -116,14 +116,5 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_view"
-        tools:ignore="VisualLintBounds">
-
-        <TextView
-            android:id="@+id/weather"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="Hello"
-            android:layout_marginTop="600dp"
-            tools:visibility="visible" />
-    </com.google.android.material.navigation.NavigationView>
+        tools:ignore="VisualLintBounds"></com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

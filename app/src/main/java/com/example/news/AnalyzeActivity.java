@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,6 +41,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quanlytk);
         lv = findViewById(R.id.lv_acc);
         UpdateLV();
+
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
             Intent intent = new Intent(this, EditUserActivity.class);
             String myJson = new Gson().toJson(userList.get(i));
