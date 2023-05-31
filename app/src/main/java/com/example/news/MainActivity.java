@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             logout.setVisible(false);
         } else {
             quanly.setVisible(getUser().getType() == 1);
+            view_add.setVisibility(getUser().getType() == 1 ? View.VISIBLE : View.INVISIBLE);
             login.setVisible(false);
             saved.setVisible(true);
             logout.setVisible(true);
