@@ -20,13 +20,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        ed_user = findViewById(R.id.editTextTK);
-        ed_pass = findViewById(R.id.editTextMK);
-        ed_comfirm = findViewById(R.id.editTextXNMK);
+        ed_user = findViewById(R.id.editTextTenChuTK);
+        ed_pass = findViewById(R.id.editMk);
+        ed_comfirm = findViewById(R.id.editTextMK);
         reg = findViewById(R.id.buttonDangKy);
 
         reg.setOnClickListener(view -> new FirebaseData().checkReg(ed_user.getText().toString(), ed_pass.getText().toString()).thenAccept(check -> {
-            if (check) {
+            if (check && ed_pass.getText().toString().equals(ed_comfirm.getText().toString())) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();

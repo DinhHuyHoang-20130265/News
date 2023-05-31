@@ -28,7 +28,11 @@ public class LoginActivity extends AppCompatActivity {
         ed_pass = findViewById(R.id.ed_pass);
 
         login = findViewById(R.id.btn_login);
-
+        TextView reg = findViewById(R.id.create);
+        reg.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
         login.setOnClickListener(view -> new FirebaseData().checkLogin(ed_user.getText().toString(), ed_pass.getText().toString()).thenAccept(user -> {
             if (user != null) {
                 setUser(user);

@@ -85,13 +85,22 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         MenuItem saved = navigationView.getMenu().getItem(0);
         MenuItem login = navigationView.getMenu().getItem(2);
+        MenuItem quanly = navigationView.getMenu().getItem(3);
+        MenuItem logout = navigationView.getMenu().getItem(4);
+
         if (getUser() == null) {
             view_add.setVisibility(View.INVISIBLE);
             login.setVisible(true);
             saved.setVisible(false);
+            quanly.setVisible(false);
+            logout.setVisible(false);
         } else {
+            if (getUser().getType() == 1) {
+                quanly.setVisible(true);
+            }
             login.setVisible(false);
             saved.setVisible(true);
+            logout.setVisible(true);
         }
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             // set item as selected to persist highlight
@@ -113,6 +122,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case "Đăng nhập": {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case "Đăng xuất": {
+                    editor.putString("user", new Gson().toJson(null));
+                    editor.apply();
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case "QL người dùng": {
+                    Intent intent = new Intent(MainActivity.this, AnalyzeActivity.class);
                     startActivity(intent);
                     break;
                 }
