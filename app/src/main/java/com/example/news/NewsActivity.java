@@ -72,7 +72,8 @@ public class NewsActivity extends AppCompatActivity {
             performSearch(keyword);
         });
         lv.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            saveDialog(i);
+            if (getUser() != null)
+                saveDialog(i);
             return true;
         });
         dao = new NewsDAO(NewsActivity.this);
