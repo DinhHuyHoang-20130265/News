@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.news.dao.NewsDAO;
 import com.example.news.models.Item;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,12 +28,9 @@ import com.squareup.picasso.Picasso;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class HistoryActivity extends AppCompatActivity {
     ListView lv;
-    public List<Item> ItemLists = new ArrayList<>();
     Dialog dialog;
     Button btn_del, btn_cancel;
     ImageView goback;
@@ -47,10 +42,7 @@ public class HistoryActivity extends AppCompatActivity {
         lv = findViewById(R.id.lv_history);
 
         UpdateLV();
-        lv.setOnItemClickListener((adapterView, view, i, l) -> {
-            addToHistory(i);
-            openLink(i);
-        });
+        lv.setOnItemClickListener((adapterView, view, i, l) -> openLink(i));
         lv.setOnItemLongClickListener((adapterView, view, i, l) -> {
             openDialog(i);
             return true;
@@ -60,23 +52,14 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     public void openLink(int i) {
-        Toast.makeText(getApplicationContext(), "đang truy cập vào tin tức", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(HistoryActivity.this, WebViewActivity.class);
-        intent.putExtra("linknews", ItemLists.get(i).getLink());
-        startActivity(intent);
-    }
-
-    public void addToHistory(int i) {
         SharedPreferences sharedPref = getSharedPreferences("application", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
         Type type = new TypeToken<List<Item>>() {
         }.getType();
         List<Item> items = new Gson().fromJson(sharedPref.getString("history", null), type);
-        if (!items.contains(ItemLists.get(i))) {
-            items.add(ItemLists.get(i));
-            editor.putString("history", new Gson().toJson(items));
-            editor.apply();
-        }
+        Toast.makeText(getApplicationContext(), "đang truy cập vào tin tức", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(HistoryActivity.this, WebViewActivity.class);
+        intent.putExtra("linknews", items.get(i).getLink());
+        startActivity(intent);
     }
 
     public void openDialog(int i) {
